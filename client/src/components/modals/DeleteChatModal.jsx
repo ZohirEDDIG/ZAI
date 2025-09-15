@@ -1,6 +1,6 @@
 import Modal from 'react-modal';
 import { useEffect } from 'react';
-import { darkToast } from '../../libs/react-hot-toast/custom-toates';
+import darkToast  from '../../utils/darkToast';
 import { useAuth, useChat, useChats } from '../../contexts/index';
 
 Modal.setAppElement('#root');

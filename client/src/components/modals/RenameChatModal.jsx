@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useAuth, useChat, useChats } from '../../contexts/index';
-import { darkToast } from '../../libs/react-hot-toast/custom-toates';
+import darkToast  from '../../utils/darkToast';
 
 
 const RenameChatModal = ({ isRenameChatModalOpen, setIsRenameChatModalOpen, chatToShowOptions, setChatToShowOptions  }) => {
