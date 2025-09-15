@@ -1,13 +1,13 @@
-import { useState,  useEffect } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
 import { jwtDecode } from 'jwt-decode';
 import AuthContext from './AuthContext';
 import { login, register } from '../../api/auth';
-import { darkToast } from '../../libs/react-hot-toast/custom-toates';
+import darkToast from '../../utils/darkToast';
 
 const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(window.localStorage.getItem('token') || null);
+  const [token, setToken] = useState(window.localStorage.getItem('token'));
   const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
@@ -15,11 +15,11 @@ const AuthProvider = ({ children }) => {
   const loginMutation = useMutation({ mutationFn: login });
   const registerMutation = useMutation({ mutationFn: register }) ;
 
-  const logout = () => {
+  const logout = (notification) => {
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
-    darkToast('Logged out successfully');
+    darkToast(notification);
   };
 
 
@@ -29,24 +29,15 @@ const AuthProvider = ({ children }) => {
           const decoded = jwtDecode(token) ;
 
           if (decoded.exp * 1000 < Date.now()) {
-            setToken(null);
-            setUser(null);
-            localStorage.removeItem('token');
-            darkToast('Session expired. Please login again');
+            logout('Session expired. Please login again')
           } else {
             setUser(decoded);
           }
       } catch {
-          setToken(null);
-          setUser(null);
-          localStorage.removeItem('token');
-          darkToast('Session expired. Please login again');
+        logout('Session expired. Please login again')
       }
-    } else {
-      setUser(null);
-    }
+    } 
   }, [token]);
-
 
 
   useEffect(() => {
@@ -54,6 +45,7 @@ const AuthProvider = ({ children }) => {
       darkToast(registerMutation.data.data.message, '✅');
       navigate('/login', { replace: true });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [registerMutation.isSuccess, registerMutation.isError]);
 
   useEffect(() => {
@@ -65,6 +57,7 @@ const AuthProvider = ({ children }) => {
 
       navigate('/', { replace: true });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loginMutation.isSuccess]);
 
   const value = { 
