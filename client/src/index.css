@@ -1,4 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Inter:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic);
+@import url(https://fonts.googleapis.com/css?family=Mozilla+Text:200,300,regular,500,600,700);
 @import 'tailwindcss';
 
 @theme {
@@ -6,7 +7,7 @@
   --color-body: #1b1c1d;
   --color-dark-gray: #282a2c;
   --color-light-gray: #4c4e51;
-  --color-error: red;
+  --color-error: #ff0000;
 }
 
 @layer components {
@@ -17,7 +18,7 @@
 
 body {
   background-color: var(--color-body);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Mozilla Text', sans-serif;
 }
 
 *::-webkit-scrollbar {

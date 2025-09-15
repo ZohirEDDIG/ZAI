@@ -5,19 +5,18 @@ import Routes from './routes/Routes';
 
 Modal.setAppElement('#root');
 
-
 const App = () => {
   return (
     <AuthProvider>
-          <ChatsProvider>
-            <ChatProvider>
+      <ChatsProvider>
+        <ChatProvider>
             <GlobalProvider>
               <Toaster />
               <Routes />
             </GlobalProvider>
-            </ChatProvider>
-          </ChatsProvider>
-        </AuthProvider>
+        </ChatProvider>
+      </ChatsProvider>
+    </AuthProvider>
   );
 };
 
