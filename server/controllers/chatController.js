@@ -9,14 +9,14 @@ export const saveChat = async (req, res) => {
     const user = await User.findById(id);
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    if(!chat.title || chat.chat.length === 0) {
-      return res.status(400).json({ error: 'Title and chat content are required' });
+    if(!chat.title || chat.conversation.length === 0) {
+      return res.status(400).json({ error: 'Chat title and conversation are required' });
     }
 
     const newChat = new Chat({
       user: id,
       title: chat.title,
-      chat: chat.chat,
+      conversation: chat.conversation,
     });
 
     await newChat.save();
@@ -35,12 +35,11 @@ export const updateChat = async (req, res) => {
     const { chatId } = req.params;
     const { newMessages } = req.body;
 
+    const chat = await Chat.findOneAndDelete({ _id: chatId,  user: id });
 
-    const user = await User.findById( id );
-    if (!user) return res.status(404).json({ error: 'User not found' });
-
-    const chat = await Chat.findById( chatId );
-    if (!chat) return res.status(404).json({ error: 'Chat not found' });
+    if (!chat) {
+      return res.status(400).json({ error: 'Chat not found or not authorized' });
+    }
 
     if(newMessages.length === 0) {
       return res.status(400).json({ error: 'New messages are required' });
@@ -74,7 +73,7 @@ export const deleteChat = async (req, res) => {
     console.error('Failed to delete chat: ', error.message);
     return res.status(500).json({ error: 'Failed to delete chat' });
   }
-}
+};
 
 export const renameChat = async (req, res) => {
   try {
@@ -94,4 +93,4 @@ export const renameChat = async (req, res) => {
     console.error('Failed to rename chat: ', error.message);
     return res.status(500).json({ error: 'Failed to rename chat' });
   }
-}
+};
