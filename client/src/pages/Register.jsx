@@ -6,20 +6,24 @@ import { useAuth } from '../contexts/index';
 import resetMutation from '../utils/resetMutation';
 
 const Register = () => {
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
   const { register, handleSubmit, formState: { errors } } = useForm();
-
+  
   const { registerMutation } = useAuth();
-
+  
   const onSubmit = (data) => {
     registerMutation.mutate(data);
   };
-
+  
   useEffect(() => {
-    resetMutation(null, registerMutation);
-  }, []);
+    return () => resetMutation(null, registerMutation);
+  }, [registerMutation]);
+  
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
+  
+  const handleTogglePasswordVisibility = () => {
+    setIsPasswordVisible((prev) => !prev);
+  };
 
   return (
     <main className='w-screen h-screen flex flex-col justify-center items-center gap-y-8'>
@@ -42,14 +46,11 @@ const Register = () => {
           
           <label htmlFor='username' className='text-white text-xs sm:text-base'>Username</label>
 
-          <input type='text' id='username' {...register('username', { 
-            required: { value: true , message: 'Username is required' }, 
-            pattern: { value: /^[a-zA-Z0-9.-@_]{3,}$/, message: 'Username must be at least 3 characters and contain only letters, numbers, ., _, @, -' } 
-          })} autoComplete='off' onFocus={(e) => resetMutation(e, registerMutation)} className='text-white p-1.5 border-2  border-gray-200 rounded-md focus:border-main focus:outline-none' />
+          <input type='text' id='username' {...register('username', { required: { value: true , message: 'Username is required' }, pattern: { value: /^[a-zA-Z0-9.-@_]{3,}$/, message: 'Username must be at least 3 characters and contain only letters, numbers, ., _, @, -' }})} onFocus={(e) => resetMutation(e, registerMutation)} className='text-white p-1.5 border-2  border-gray-200 rounded-md focus:border-main focus:outline-none' />
           
           {errors.username && <p className='text-error text-xs'>{errors.username.message}</p>}
 
-          {registerMutation.isError && <p className='text-error text-xs'>{registerMutation.error.response.data?.errors?.username.message}</p>}
+          {registerMutation.isError && registerMutation.error.response.data?.errors?.username.message && <p className='text-error text-xs'>{registerMutation.error.response.data.errors.username.message}</p>}
 
         </div>
 
@@ -60,22 +61,19 @@ const Register = () => {
           
           <div className='relative'>
             
-            <input type={isPasswordVisible ? 'text' : 'password'} id='password' {...register('password', {
-              required: { value: true, message: 'Password is required' }, 
-              pattern: { value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,14}$/, message: 'Password must be 8-14 characters and include uppercase, lowercase, number'  }})} 
-              autoComplete='new-password' onFocus={(e) => resetMutation(e, registerMutation)} className='text-white w-full p-1.5 pr-8 border-2 border-gray-200 rounded-md focus:border-main focus:outline-none' />
+            <input type={isPasswordVisible ? 'text' : 'password'} id='password' {...register('password', { required: { value: true, message: 'Password is required' }, pattern: { value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,14}$/, message: 'Password must be 8-14 characters and include uppercase, lowercase, number'  }})} onFocus={(e) => resetMutation(e, registerMutation)} className='text-white w-full p-1.5 pr-8 border-2 border-gray-200 rounded-md focus:border-main focus:outline-none' />
             
-            <button type='button' onClick={() => setIsPasswordVisible((prev) => !prev)} className='text-white absolute right-2 top-3 cursor-pointer select-none'>{isPasswordVisible ? <EyeSlash /> : <Eye />}</button>
+            <button type='button' onClick={handleTogglePasswordVisibility} className='text-white absolute right-2 top-3 cursor-pointer select-none'>{isPasswordVisible ? <EyeSlash /> : <Eye />}</button>
           
           </div>
           
           {errors.password && <p className='text-error text-xs'>{errors.password.message}</p>}
           
-          {registerMutation.isError && <p className='text-error text-xs'>{registerMutation.error.response.data?.errors?.password.message}</p>}
+          {registerMutation.isError && registerMutation.error.response.data?.errors?.password.message && <p className='text-error text-xs'>{registerMutation.error.response.data.errors.password.message}</p>}
         
         </div>
 
-        {registerMutation.isError && <p className='text-error text-xs'>{registerMutation.error.response.data.error || 'Filed to register'}</p>}
+        {registerMutation.isError && registerMutation.error.response.data?.error && <p className='text-error text-xs'>{registerMutation.error.response.data.error}</p>}
 
         <button type='submit' className='btn-main'>{registerMutation.isPending ? 'Registering' : 'Register'}</button>
 
